@@ -2,7 +2,9 @@ package helpers
 
 import "github.com/sirupsen/logrus"
 
-func SetupLogger() *logrus.Logger {
+var Logger *logrus.Logger
+
+func SetupLogger() {
 	log := logrus.New()
 
 	log.SetFormatter(&logrus.TextFormatter{
@@ -11,5 +13,5 @@ func SetupLogger() *logrus.Logger {
 
 	log.Info("Logger Initialized Using Logrus")
 
-	return log
+	Logger = log
 }

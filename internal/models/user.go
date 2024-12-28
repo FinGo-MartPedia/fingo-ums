@@ -10,7 +10,7 @@ type User struct {
 	ID          int       `json:"id" gorm:"primary_key;auto_increment"`
 	Username    string    `json:"username" gorm:"column:username;type:varchar(25);unique;not null" validate:"required"`
 	Email       string    `json:"email" gorm:"column:email;type:varchar(100);unique;not null" validate:"required,email"`
-	Password    string    `json:"password" gorm:"column:password;type:varchar(255);not null" validate:"required"`
+	Password    string    `json:"password,omitempty" gorm:"column:password;type:varchar(255);not null" validate:"required"`
 	Fullname    string    `json:"fullname" gorm:"column:fullname;type:varchar(100);not null" validate:"required"`
 	PhoneNumber string    `json:"phone_number" gorm:"column:phone_number;type:varchar(15);not null" validate:"required"`
 	Address     string    `json:"address" gorm:"column:address;type:text"`
@@ -23,7 +23,7 @@ func (*User) TableName() string {
 	return "users"
 }
 
-func (l *User) validate() error {
+func (l *User) Validate() error {
 	v := validator.New()
 	return v.Struct(l)
 }
@@ -43,7 +43,7 @@ func (*UserSession) TableName() string {
 	return "user_sessions"
 }
 
-func (l *UserSession) validate() error {
+func (l *UserSession) Validate() error {
 	v := validator.New()
 	return v.Struct(l)
 }
