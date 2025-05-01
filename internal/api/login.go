@@ -7,17 +7,19 @@ import (
 	"github.com/fingo-martPedia/fingo-ums/constants"
 	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
-	"github.com/fingo-martPedia/fingo-ums/internal/models"
+	"github.com/fingo-martPedia/fingo-ums/internal/models/requests"
+	"github.com/fingo-martPedia/fingo-ums/internal/models/responses"
 	"github.com/gin-gonic/gin"
 )
 
-type RegisterHandler struct {
-	RegisterService interfaces.IRegisterService
+type LoginHandler struct {
+	LoginService interfaces.ILoginService
 }
 
-func (api *RegisterHandler) Register(c *gin.Context) {
+func (api *LoginHandler) Login(c *gin.Context) {
 	log := helpers.Logger
-	req := models.User{}
+	var req requests.LoginRequest
+	var response responses.LoginResponse
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		log.Error("Failed to bind request body: ", err)
@@ -31,15 +33,16 @@ func (api *RegisterHandler) Register(c *gin.Context) {
 		return
 	}
 
-	resp, err := api.RegisterService.Register(c, req)
+	response, err := api.LoginService.Login(c, req)
 	if err != nil {
-		log.Error("Failed to register user: ", err)
-		if errors.Is(err, helpers.ErrUsernameExists) {
+		log.Error("Failed to login user: ", err)
+		if errors.Is(err, helpers.ErrInvalidCredentials) {
 			helpers.SendResponse(c, http.StatusBadRequest, constants.ErrFailedBadRequest, err.Error())
 		} else {
 			helpers.SendResponse(c, http.StatusInternalServerError, constants.ErrFailedServerError, err.Error())
 		}
 		return
 	}
-	helpers.SendResponse(c, http.StatusOK, constants.SuccessMessage, resp)
+
+	helpers.SendResponse(c, http.StatusOK, constants.SuccessMessage, response)
 }

@@ -3,13 +3,14 @@ package services
 import (
 	"context"
 
+	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
 	"github.com/fingo-martPedia/fingo-ums/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterService struct {
-	RegisterRepository interfaces.IRegisterRepository
+	UserRepository interfaces.IUserRepository
 }
 
 func (s *RegisterService) Register(ctx context.Context, request models.User) (interface{}, error) {
@@ -19,7 +20,12 @@ func (s *RegisterService) Register(ctx context.Context, request models.User) (in
 	}
 	request.Password = string(hashedPassword)
 
-	err = s.RegisterRepository.InsertNewUser(ctx, &request)
+	existUser, err := s.UserRepository.GetUserByUsername(ctx, request.Username)
+	if existUser.ID != 0 {
+		return nil, helpers.ErrUsernameExists
+	}
+
+	err = s.UserRepository.InsertNewUser(ctx, &request)
 	if err != nil {
 		return nil, err
 	}

@@ -6,8 +6,6 @@ import (
 )
 
 func main() {
-	helpers.SetupConfig()
-
 	helpers.SetupLogger()
 
 	helpers.SetupDatabase()
