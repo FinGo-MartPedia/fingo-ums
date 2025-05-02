@@ -45,6 +45,8 @@ func (s *LoginService) Login(ctx context.Context, request requests.LoginRequest)
 
 	userSession := &models.UserSession{
 		UserID:              userDetail.ID,
+		UserAgent:           request.UserAgent,
+		IPAddress:           request.IPAddress,
 		AccessToken:         accessToken,
 		RefreshToken:        refreshToken,
 		AccessTokenExpired:  now.Add(helpers.MapTypeToken["access_token"]),

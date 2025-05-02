@@ -5,16 +5,18 @@ import (
 
 	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/api"
+	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
 	"github.com/fingo-martPedia/fingo-ums/internal/repository"
 	"github.com/fingo-martPedia/fingo-ums/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 func ServeHTTP() {
-	Dependency := dependencyInject()
-	healthcheckApi := Dependency.HealthcheckAPI
-	registerApi := Dependency.RegisterAPI
-	loginApi := Dependency.LoginAPI
+	dependencies := dependencyInject()
+	healthcheckApi := dependencies.HealthcheckAPI
+	registerApi := dependencies.RegisterAPI
+	loginApi := dependencies.LoginAPI
+	logoutApi := dependencies.LogoutAPI
 
 	r := gin.Default()
 
@@ -23,6 +25,7 @@ func ServeHTTP() {
 	apiV1 := r.Group("/api/v1/user")
 	apiV1.POST("/register", registerApi.Register)
 	apiV1.POST("/login", loginApi.Login)
+	apiV1.DELETE("/logout", dependencies.MiddlewareValidateAuth, logoutApi.Logout)
 
 	err := r.Run(":" + helpers.GetEnv("PORT", "8080"))
 	if err != nil {
@@ -31,9 +34,12 @@ func ServeHTTP() {
 }
 
 type Dependency struct {
-	HealthcheckAPI *api.Healthcheck
-	RegisterAPI    *api.RegisterHandler
-	LoginAPI       *api.LoginHandler
+	UserRepository interfaces.IUserRepository
+
+	HealthcheckAPI interfaces.IHealthcheckHandler
+	RegisterAPI    interfaces.IRegisterHandler
+	LoginAPI       interfaces.ILoginHandler
+	LogoutAPI      interfaces.ILogoutHandler
 }
 
 func dependencyInject() Dependency {
@@ -60,9 +66,18 @@ func dependencyInject() Dependency {
 		LoginService: loginSvc,
 	}
 
+	logoutSvc := &services.LogoutService{
+		UserRepository: userRepo,
+	}
+	logoutAPI := &api.LogoutHandler{
+		LogoutService: logoutSvc,
+	}
+
 	return Dependency{
+		UserRepository: userRepo,
 		HealthcheckAPI: healthcheckAPI,
 		RegisterAPI:    registerAPI,
 		LoginAPI:       loginAPI,
+		LogoutAPI:      logoutAPI,
 	}
 }

@@ -21,11 +21,23 @@ func (api *LoginHandler) Login(c *gin.Context) {
 	var req requests.LoginRequest
 	var response responses.LoginResponse
 
+	userAgent := c.Request.UserAgent()
+	ipAddress := c.ClientIP()
+
+	if userAgent == "" || ipAddress == "" {
+		log.Error("User agent or IP address is empty")
+		helpers.SendResponse(c, http.StatusBadRequest, constants.ErrFailedBadRequest, "User agent or IP address is empty")
+		return
+	}
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		log.Error("Failed to bind request body: ", err)
 		helpers.SendResponse(c, http.StatusBadRequest, constants.ErrFailedBadRequest, err.Error())
 		return
 	}
+
+	req.UserAgent = userAgent
+	req.IPAddress = ipAddress
 
 	if err := req.Validate(); err != nil {
 		log.Error("Failed to validate request body: ", err)
