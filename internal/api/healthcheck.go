@@ -5,11 +5,16 @@ import (
 
 	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
+	"github.com/fingo-martPedia/fingo-ums/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 type Healthcheck struct {
 	HealthcheckService interfaces.IHealthcheckServices
+}
+
+func NewHealthcheckHandler(svc *services.Healthcheck) *Healthcheck {
+	return &Healthcheck{HealthcheckService: svc}
 }
 
 func (api *Healthcheck) Handler(c *gin.Context) {

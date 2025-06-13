@@ -30,8 +30,6 @@ func (l *User) Validate() error {
 
 type UserSession struct {
 	ID                  uint      `json:"id" gorm:"primarykey"`
-	CreatedAt           time.Time `json:"created_at"`
-	UpdatedAt           time.Time `json:"updated_at"`
 	UserID              int       `json:"user_id" gorm:"type:int;" validate:"required"`
 	UserAgent           string    `json:"user_agent" gorm:"type:varchar(255);" validate:"required"`
 	IPAddress           string    `json:"ip_address" gorm:"type:varchar(255);" validate:"required"`
@@ -39,6 +37,8 @@ type UserSession struct {
 	RefreshToken        string    `json:"refresh_token" gorm:"type:varchar(512);" validate:"required"`
 	AccessTokenExpired  time.Time `json:"-" validate:"required"`
 	RefreshTokenExpired time.Time `json:"-" validate:"required"`
+	CreatedAt           time.Time `json:"created_at"`
+	UpdatedAt           time.Time `json:"updated_at"`
 }
 
 func (*UserSession) TableName() string {

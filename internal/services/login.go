@@ -18,6 +18,10 @@ type LoginService struct {
 	UserRepository interfaces.IUserRepository
 }
 
+func NewLoginService(repo interfaces.IUserRepository) *LoginService {
+	return &LoginService{UserRepository: repo}
+}
+
 func (s *LoginService) Login(ctx context.Context, request requests.LoginRequest) (responses.LoginResponse, error) {
 	var (
 		response responses.LoginResponse

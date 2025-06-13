@@ -13,6 +13,10 @@ type RegisterService struct {
 	UserRepository interfaces.IUserRepository
 }
 
+func NewRegisterService(repo interfaces.IUserRepository) *RegisterService {
+	return &RegisterService{UserRepository: repo}
+}
+
 func (s *RegisterService) Register(ctx context.Context, request models.User) (interface{}, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {

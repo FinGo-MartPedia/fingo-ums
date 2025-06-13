@@ -1,11 +1,12 @@
 module github.com/fingo-martPedia/fingo-ums
 
-go 1.22
+go 1.24
 
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/google/wire v0.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3

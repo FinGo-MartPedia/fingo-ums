@@ -9,11 +9,16 @@ import (
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
 	"github.com/fingo-martPedia/fingo-ums/internal/models/requests"
 	"github.com/fingo-martPedia/fingo-ums/internal/models/responses"
+	"github.com/fingo-martPedia/fingo-ums/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 type LoginHandler struct {
 	LoginService interfaces.ILoginService
+}
+
+func NewLoginHandler(svc *services.LoginService) *LoginHandler {
+	return &LoginHandler{LoginService: svc}
 }
 
 func (api *LoginHandler) Login(c *gin.Context) {

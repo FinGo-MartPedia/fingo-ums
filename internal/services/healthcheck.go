@@ -6,6 +6,10 @@ type Healthcheck struct {
 	HealthcheckRepository interfaces.IHealthcheckRepo
 }
 
+func NewHealthcheckService() *Healthcheck {
+	return &Healthcheck{}
+}
+
 func (s *Healthcheck) HealthcheckServices() (string, error) {
 	return "OK", nil
 }
