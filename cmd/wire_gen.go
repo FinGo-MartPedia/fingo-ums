@@ -9,9 +9,11 @@ package cmd
 import (
 	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/api"
+	"github.com/fingo-martPedia/fingo-ums/internal/api/grpcapi"
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
 	"github.com/fingo-martPedia/fingo-ums/internal/repository"
 	"github.com/fingo-martPedia/fingo-ums/internal/services"
+	"github.com/fingo-martPedia/fingo-ums/internal/services/grpcservice"
 	"gorm.io/gorm"
 )
 
@@ -30,13 +32,16 @@ func InitDependency() Dependency {
 	logoutHandler := api.NewLogoutHandler(logoutService)
 	refreshTokenService := services.NewRefreshTokenService(userRepository)
 	refreshTokenHandler := api.NewRefreshTokenHandler(refreshTokenService)
+	tokenValidationService := grpcservice.NewTokenValidationService(userRepository)
+	tokenValidationHandler := grpcapi.NewTokenValidationHandler(tokenValidationService)
 	dependency := Dependency{
-		UserRepository:  userRepository,
-		HealthcheckAPI:  apiHealthcheck,
-		LoginAPI:        loginHandler,
-		RegisterAPI:     registerHandler,
-		LogoutAPI:       logoutHandler,
-		RefreshTokenAPI: refreshTokenHandler,
+		UserRepository:     userRepository,
+		HealthcheckAPI:     apiHealthcheck,
+		LoginAPI:           loginHandler,
+		RegisterAPI:        registerHandler,
+		LogoutAPI:          logoutHandler,
+		RefreshTokenAPI:    refreshTokenHandler,
+		TokenValidationAPI: tokenValidationHandler,
 	}
 	return dependency
 }
@@ -51,6 +56,8 @@ type Dependency struct {
 	RegisterAPI     interfaces.IRegisterHandler
 	LogoutAPI       interfaces.ILogoutHandler
 	RefreshTokenAPI interfaces.IRefreshTokenHandler
+
+	TokenValidationAPI *grpcapi.TokenValidationHandler
 }
 
 func provideDB() *gorm.DB {

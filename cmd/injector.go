@@ -6,9 +6,11 @@ package cmd
 import (
 	"github.com/fingo-martPedia/fingo-ums/helpers"
 	"github.com/fingo-martPedia/fingo-ums/internal/api"
+	"github.com/fingo-martPedia/fingo-ums/internal/api/grpcapi"
 	"github.com/fingo-martPedia/fingo-ums/internal/interfaces"
 	"github.com/fingo-martPedia/fingo-ums/internal/repository"
 	"github.com/fingo-martPedia/fingo-ums/internal/services"
+	"github.com/fingo-martPedia/fingo-ums/internal/services/grpcservice"
 	"github.com/google/wire"
 	"gorm.io/gorm"
 )
@@ -21,6 +23,8 @@ type Dependency struct {
 	RegisterAPI     interfaces.IRegisterHandler
 	LogoutAPI       interfaces.ILogoutHandler
 	RefreshTokenAPI interfaces.IRefreshTokenHandler
+
+	TokenValidationAPI *grpcapi.TokenValidationHandler
 }
 
 func provideDB() *gorm.DB {
@@ -60,6 +64,10 @@ func InitDependency() Dependency {
 		services.NewRefreshTokenService,
 		api.NewRefreshTokenHandler,
 		wire.Bind(new(interfaces.IRefreshTokenHandler), new(*api.RefreshTokenHandler)),
+
+		// TokenValidation
+		grpcservice.NewTokenValidationService,
+		grpcapi.NewTokenValidationHandler,
 
 		// Final struct
 		wire.Struct(new(Dependency), "*"),
